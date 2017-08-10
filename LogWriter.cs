@@ -118,13 +118,13 @@ namespace Utility
 
         private string GetNewFileName()
         {
-            FileInfo fi = new FileInfo(FileName);
-            DirectoryInfo di = fi.Directory;
-            string fileNameNoExt = Path.GetFileNameWithoutExtension(FileName);
+            System.IO.FileInfo fi = new System.IO.FileInfo(this.FileName);
+            System.IO.DirectoryInfo di = fi.Directory;
+            string fileNameNoExt = System.IO.Path.GetFileNameWithoutExtension(this.FileName);
             string newFileName = Regex.Replace(fileNameNoExt, "\\(\\d+\\)", "");
             string directName = di.FullName + "\\";
-            FileInfo[] fis = di.GetFiles(newFileName + "*" + _ext);
-            Array.Sort(fis, CompareDinosByLength);
+            System.IO.FileInfo[] fis = di.GetFiles(newFileName + "*" + this._ext);
+            System.Array.Sort<System.IO.FileInfo>(fis, new System.Comparison<System.IO.FileInfo>(LogWriter.CompareDinosByLength));
             int idx = 1;
             int len = fis.Length;
             string fileFullName = "";
@@ -132,23 +132,39 @@ namespace Utility
             {
                 for (int i = len - 1; i >= 0; i--)
                 {
-                    Match m = Regex.Match(fis[i].Name, "\\d+");
-                    if (m.Success)
+                    Match j = Regex.Match(fis[i].Name, "\\((\\d+)\\)\\.\\S+");
+                    if (j.Success)
                     {
                         fileFullName = fis[i].FullName;
-                        idx = Int32.Parse(m.Value);
+                        idx = int.Parse(j.Result("$1"));
                         break;
                     }
                 }
-                if (new FileInfo(fileFullName).Length >= _fileSize)
+                if (new System.IO.FileInfo(fileFullName).Length >= this._fileSize)
                 {
                     idx++;
-                    fileFullName = directName + newFileName + "(" + idx + ")" + _ext;
+                    fileFullName = string.Concat(new object[]
+					{
+						directName,
+						newFileName,
+						"(",
+						idx,
+						")",
+						this._ext
+					});
                 }
             }
             else
             {
-                fileFullName = directName + newFileName + "(" + idx + ")" + _ext;
+                fileFullName = string.Concat(new object[]
+				{
+					directName,
+					newFileName,
+					"(",
+					idx,
+					")",
+					this._ext
+				});
             }
             return fileFullName;
         }
