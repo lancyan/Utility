@@ -438,27 +438,5 @@ namespace Utility
 
         #endregion SHA1
 
-        #region HMAC
-        public static string ToHMACSHA1(string encryptText, string encryptKey)
-        {
-            byte[] key = System.Text.Encoding.UTF8.GetBytes(encryptKey);
-            byte[] dataBuffer = System.Text.Encoding.UTF8.GetBytes(encryptText);
-            using (HMACSHA1 hmacsha1 = new HMACSHA1(key))
-            {
-                byte[] hashBytes = hmacsha1.ComputeHash(dataBuffer);
-                return Convert.ToBase64String(hashBytes);
-            }
-        }
-        private string ToHMACSHA256(string message, string secret = "")
-        {
-            byte[] keyByte = System.Text.Encoding.UTF8.GetBytes(secret);
-            byte[] messageBytes = System.Text.Encoding.UTF8.GetBytes(message);
-            using (var hmacsha256 = new HMACSHA256(keyByte))
-            {
-                byte[] hashmessage = hmacsha256.ComputeHash(messageBytes);
-                return Convert.ToBase64String(hashmessage);
-            }
-        }
-        #endregion
     }
 }
